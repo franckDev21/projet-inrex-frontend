@@ -5,8 +5,29 @@ export const STANDARD_SECTIONS = [
   1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240,
 ];
 
+interface CurrentCapacity {
+  conduit: number[];
+  buried: number[];
+  surface: number[];
+  tray: number[];
+  duct: number[];
+  air: number[];
+}
+
+interface InsulationType {
+  currentCapacity: CurrentCapacity;
+  maxTemp: number;
+}
+
+interface ConductorType {
+  resistivity: number;
+  pvc: InsulationType;
+  xlpe: InsulationType;
+  epr: InsulationType;
+}
+
 // Cable parameters based on conductor material and insulation
-const CABLE_PARAMETERS = {
+const CABLE_PARAMETERS: Record<string, ConductorType> = {
   copper: {
     resistivity: 0.0175, // Ohm.mm²/m
     pvc: {
@@ -136,9 +157,14 @@ function getMinimumSectionForCurrent(
   groupingFactor = 1
 ): number {
   // Get the current capacity values for the specified material, insulation, and installation
-  const capacities = CABLE_PARAMETERS[conductorMaterial as keyof typeof CABLE_PARAMETERS][insulationType as keyof typeof CABLE_PARAMETERS.copper][
-    'currentCapacity'
-  ][installationType as keyof typeof CABLE_PARAMETERS.copper.pvc.currentCapacity];
+  const conductor = CABLE_PARAMETERS[conductorMaterial];
+  if (!conductor) throw new Error(`Invalid conductor material: ${conductorMaterial}`);
+
+  const insulation = conductor[insulationType as 'pvc' | 'xlpe'];
+  if (!insulation) throw new Error(`Invalid insulation type: ${insulationType}`);
+
+  const capacities = insulation.currentCapacity[installationType as keyof CurrentCapacity];
+  if (!capacities) throw new Error(`Invalid installation type: ${installationType}`);
 
   // Apply correction factors
   const correctedCurrent = current / (temperatureFactor * installationFactor * groupingFactor);

@@ -42,7 +42,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/mentions-legales" className="text-muted-foreground hover:text-foreground transition-colors">Mentions légales</Link></li>
               <li><Link href="/confidentialite" className="text-muted-foreground hover:text-foreground transition-colors">Politique de confidentialité</Link></li>
-              <li><Link href="/conditions" className="text-muted-foreground hover:text-foreground transition-colors">Conditions d'utilisation</Link></li>
+              <li><Link href="/conditions" className="text-muted-foreground hover:text-foreground transition-colors">Conditions d&apos;utilisation</Link></li>
               <li><Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link></li>
             </ul>
           </div>
